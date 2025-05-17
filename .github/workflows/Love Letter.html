@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>A Love Letter</title>
+            <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+           body {
+            margin: 0;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            }
+
+            body::after {
+                content: "";
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                height: 100%;
+                background: black;
+                animation: fadeOut 2s forwards;
+                z-index: 999;
+            }
+
+            @keyframes fadeOut {
+                0% {opacity: 1;}
+                100% {opacity: 0; pointer-events: none;}
+            }
+
+            /* Twinking stars */
+            .star {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: white;
+                border-radius: 50%;
+                opacity: 0.8;
+                animation: twinkle 2s infinite ease-in-out;
+            }
+
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 1; }
+            }
+
+            .moon {
+                position: absolute;
+                top: 10%;
+                right: 10%;
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle at center, #fdf5e6 30%, #e6ddc4, 70%, #bfb8a7 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 30px rgba(255, 244, 200, 0.6),
+                            0 0 60px rgba(255, 244, 200, 0.4),
+                            0 0 100px rgba(255, 244, 200, 0.2);
+                animation: moonGlow 5s infinite alternate;
+                overflow: hidden;
+                z-index: 0;
+            }
+
+            .moon::before, .moon::after {
+                content: '';
+                position: absolute;
+                background: rgba(180, 180, 180, 0.3);
+                border-radius: 50%;
+            }
+
+            .moon::before {
+                width: 20px;
+                height: 20px;
+                top: 30px;
+                left: 40px;
+                box-shadow: 
+                0 0 5px rgba(0, 0, 0, 0.2),
+                -20px -10px 0 5px rgba(160, 160, 160, 0.3),
+                30px 20px 0 8px rgba(160, 160, 160, 0.2);
+            }
+
+            .moon::after {
+                width: 10px;
+                height: 10px;
+                top: 80px;
+                left: 90px;
+                box-shadow:
+                10px 10px 0 3px rgba(160, 160, 160, 0.2),
+                -15px 5px 0 4px rgba(160, 160, 160, 0.3);
+            }
+
+            @keyframes moonGlow {
+                0% { box-shadow: 0 0 30px rgba(255, 244, 200, 0.4); }
+                100% { box-shadow: 0 0 60px rgba(255, 244, 200, 0.8); }
+            }
+
+            .envelope-container {
+                width: 300px;
+                height: 200px;
+                position: relative;
+                cursor: pointer;
+                z-index: 5;
+                perspective: 1000px;
+                transition: transform 0.3s ease;
+            }
+
+            .envelope-container:hover {
+                transform: scale(1.05);
+                animation: pulseGlow 2s infinite alternate;
+            }
+
+            @keyframes pulseGlow {
+                from {
+                    box-shadow: 0 0 10px rgba(255, 192, 203, 0.3);
+                }
+                to {
+                    box-shadow: 0 0 25px rgba(255, 192, 203, 0.7);
+                }
+            }
+
+            .envelope {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+
+            .envelope-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: #f1e0c6; /*Realistic cream or light beige */
+                border-radius: 10px;
+                z-index: 1;
+            }
+
+            .flap {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0;  
+                height: 0;
+                border-left: 150px solid transparent;
+                border-right: 150px solid transparent;
+                border-top: 100px solid #c2a68d; /*Natural flap brown/beige */
+                transform-origin: top center;
+                transition: transform 1s ease;
+                z-index: 4; /*Above the letter before opening */
+            }
+
+            .envelope-front {
+                position: absolute;
+                width: 100%;
+                height: 100px;
+                background: #f4e0cf; /*Light off-white/beige */
+                bottom: 0;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                z-index: 3;
+            }
+
+            .letter {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                width: 280px;
+                height: auto;
+                background: white;
+                padding: 20px;
+                font-size: 16px;
+                font-family: 'Satisfy', cursive;
+                color: #333;
+                border-radius: 10px;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                transform: translateY(0);
+                opacity: 0;
+                z-index: 2;
+                transition: transform 0.8s ease-out 1s, opacity 0.8s ease-out 1s;
+            }
+
+            .open .flap {
+                transform: rotateX(180deg);
+                z-index: 0; /* Letter above everything after opening */
+                }
+
+            .open .letter {
+            transform: translateY(-180px);
+            opacity: 1;
+            z-index: 5; /*Letter above everything after opening */
+            }
+
+            /* Floating hearts*/
+            .heart {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background: red;
+                transform: rotate(45deg);
+                opacity: 0.8;
+                animation: floatUp 3s ease-in forwards;
+                z-index: 0;
+            }
+
+            .heart::before,
+            .heart::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background: red;
+                border-radius: 50%;
+            }
+
+            .heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+
+            .heart::after {
+                left: -10px;
+                top: 0;
+            }
+
+
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(0) scale(1) rotate(45deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-300px) scale(1.5) rotate(45deg);
+                    opacity: 0;
+                }
+            }
+
+            /* Secret button and message styles */
+            #revealBtn {
+                margin-top: 10px;
+                padding: 6px 10px;
+                background: #c2a68d;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            #secretMsg {
+                display: none;
+                margin-top: 10px;
+                font-style: italic;
+                color: #b30059;
+                animation: fadeInSecret 1s ease-in-out;
+            }
+
+            @keyframes fadeInSecret {
+                from {opacity: 0; transform: translateY(10px);}
+                to {opacity: 1; transform: translateY(0);}
+            }
+
+            /* FireFlies */
+            .firefly {
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                background: yellow;
+                border-radius: 50%;
+                opacity: 0.8;
+                box-shadow: 0 0 10px yellow;
+                animation: flicker 2s infinite ease-in-out, moveFirefly 10s linear infinite;
+            }
+
+            @keyframes flicker {
+                0%, 100% { opacity: 0.5; }
+                50% { opacity: 1; }
+            }
+
+            @keyframes moveFirefly {
+                0% {
+                    transform: translate(0,0 );
+                }
+                100% {
+                    transform: translate(100px, -200px);
+                }
+            }
+            
+            .shooting-star {
+                position: absolute;
+                width: 2px;
+                height: 100px;
+                background: linear-gradient(-45deg, white, rgba(255,255,255,0));
+                opacity: 0;
+                transform: rotate(45deg);
+                animation: shoot 1.5s ease-in forwards;
+                z-index: 0;
+            }
+
+            @keyframes shoot {
+                0% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(45deg);
+                }
+
+                100% {
+                    opacity: 0;
+                    transform:  translate(-300px, 300px) rotate(45deg);
+                }
+
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="moon"></div>
+
+        <div class="envelope-container" onclick="openEnvelope()">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="flap" id="flap"></div>
+                <div class="letter" id="letter">
+                    <h2>Dear 박수연❤️</h2>
+                    <p>Whenever my eyes find you, my heart races like a wild melody. Your smile, your laughter, they’re the sweetest verses in my favorite song</p>
+                    <p>I catch myself smiling just thinking of you, at your playful charm, at the way you shine with effortless confidence.</p>
+                    <p>Forever yours, 한건영</p>
+
+                    <!--Hidden button and Message-->
+                    <button id="revealBtn">Click Me😁</button>
+                    <p id="secretMsg">You are my favourite notification, My favourite hello and my hardest goodbye💌</p>
+                </div>
+            <div class="envelope-front"></div>
+            </div>
+        </div>
+
+        <!--Optimal Sound-->
+        <audio src="chime" preload="auto">
+        <source src = "data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAA..." type="audio/mp3">
+        </audio>
+
+        <script>
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+
+                const size = Math.random() * 10 + 10;
+                heart.style.width = `${size}px`;
+                heart.style.height = `${size}px`;
+                heart.style.left = `${Math.random() * window.innerWidth}px`;
+                heart.style.bottom = '0px';
+
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 3000);
+            }
+
+            function openEnvelope() {
+                const envelope = document.getElementById('envelope');
+                envelope.classList.toggle('open');
+
+                if (envelope.classList.contains('open')) {
+                    let heartInterval = setInterval (() => {
+                        for (let i = 0; i < 3; i++) createHeart ();
+                    }, 150);
+                    setTimeout(() => clearInterval (heartInterval), 3000);
+                }
+            }
+
+            function createShootingStar() {
+                const star = document.createElement('div');
+                star.classList.add('shooting-star');
+                star.style.top = `${Math.random() * window.innerHeight * 0.4}px`;
+                star.style.left = `${window.innerWidth - Math.random() * 200}px`;
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 2000);
+            }
+
+            function createTwinklingStars() {
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    star.style.top = `${Math.random() * 100}vh`;
+                    star.style.left = `${Math.random() * 100}vw`;
+                    star.style.animationDuration = `${1 + Math.random() * 3}s`
+                    document.body.appendChild(star);
+                }
+            }
+
+            // Secret Message Reveal
+            document.addEventListener('DOMContentLoaded',() => {
+                const revealBtn = document.getElementById('revealBtn');
+                const secretMsg = document.getElementById('secretMsg');
+
+                revealBtn.addEventListener('click', (event)=> {
+                    event.stopPropagation();// Prevent envelope from closing on click
+                    secretMsg.style.display = 'block';
+                    revealBtn.style.display = 'none';
+                });
+
+                 // Create fireflies
+                for (let i = 0; i < 20; i++) {
+                const firefly = document.createElement('div');
+                firefly.classList.add('firefly');
+                firefly.style.top = `${Math.random() * 100}vh`;
+                firefly.style.left = `${Math.random() * 100}vw`;
+                firefly.style.animationDuration = `${5 + Math.random() * 5}s`;
+                document.body.appendChild(firefly);
+            }
+
+            createTwinklingStars();
+
+            // Frequent shooting stars
+            setInterval(() => {
+                if (Math.random() < 0,9) createShootingStar();
+                }, 1200);
+            });
+        </script>
+    </body>
+</html>
